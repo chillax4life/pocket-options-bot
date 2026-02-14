@@ -1,0 +1,100 @@
+pocket_options:
+  base_url: "https://pocketoption.com/"
+  login_timeout: 30  # seconds
+  trade_execution_timeout: 10  # seconds
+  session_keepalive_interval: 300  # seconds (5 minutes)
+  
+browser:
+  headless: false  # Set to true for production
+  window_width: 1920
+  window_height: 1080
+  user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  
+trading:
+  asset: "EUR/USD"  # Default trading asset
+  timeframe: 1  # minutes (candle timeframe)
+  contract_duration: 5  # minutes (option expiration)
+  stake_amount: 5.0  # USD per trade
+  max_concurrent_trades: 1  # One trade at a time
+  wait_between_trades: 10  # seconds
+  
+indicators:
+  rsi:
+    enabled: true
+    period: 14
+    overbought: 70
+    oversold: 30
+  
+  macd:
+    enabled: true
+    fast_period: 12
+    slow_period: 26
+    signal_period: 9
+  
+  bollinger_bands:
+    enabled: true
+    period: 20
+    std_dev: 2
+  
+  ema:
+    enabled: true
+    periods: [9, 21, 50]
+  
+  stochastic:
+    enabled: true
+    k_period: 14
+    d_period: 3
+    overbought: 80
+    oversold: 20
+  
+  adx:
+    enabled: true
+    period: 14
+    trend_threshold: 25  # Above this = strong trend
+    
+strategy:
+  min_signal_strength: 0.6  # 0-1 threshold for executing trade
+  min_indicators_agreeing: 3  # Minimum number of indicators signaling same direction
+  
+  initial_weights:
+    rsi: 1.0
+    macd: 1.0
+    bollinger: 1.0
+    ema: 1.0
+    stochastic: 1.0
+    adx: 1.0
+  
+  learning:
+    enabled: true
+    learning_rate: 0.01  # Weight adjustment rate
+    min_weight: 0.1  # Minimum allowed weight
+    max_weight: 5.0  # Maximum allowed weight
+    update_frequency: 1  # Update weights after every N trades
+    
+risk_management:
+  max_daily_loss: 50.0  # USD - stop trading if reached
+  max_daily_trades: 50  # Maximum number of trades per day
+  min_account_balance: 100.0  # USD - stop if balance drops below
+  position_size_pct: 2.0  # Percentage of account balance per trade
+  max_position_size: 20.0  # USD - absolute maximum per trade
+  consecutive_loss_limit: 5  # Stop after N consecutive losses
+  cooldown_after_loss: 60  # seconds to wait after a loss
+  
+data:
+  buffer_size: 100  # Number of candles to keep in memory
+  save_raw_data: true  # Save tick data to database
+  data_validation: true  # Validate data before use
+  
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "logs/bot.log"
+  max_size_mb: 10
+  backup_count: 5
+  log_trades: true
+  log_indicators: true
+  log_signals: true
+  
+paper_trading:
+  enabled: false  # Set to true for simulation mode
+  initial_balance: 1000.0  # USD
+  use_real_data: true  # Use live data but don't place real trades
