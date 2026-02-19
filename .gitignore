@@ -77,3 +77,12 @@ dmypy.json
 # Backup files
 *.bak
 *.backup
+
+# Browser session data
+.browser-data/
+
+# Learning data (runtime)
+learning_data.json
+
+# Screenshots
+*.png
