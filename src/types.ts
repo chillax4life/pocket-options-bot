@@ -15,13 +15,13 @@ export interface Indicator {
 }
 
 export interface Signal {
-  direction: 'BUY' | 'SELL' | 'NEUTRAL';
+  direction: "BUY" | "SELL" | "NEUTRAL";
   strength: number;
   confidence: number;
 }
 
 export interface TradeDecision {
-  direction: 'BUY' | 'SELL' | 'WAIT';
+  direction: "BUY" | "SELL" | "WAIT";
   confidence: number;
   indicatorScores: Record<string, number>;
   timestamp: number;
@@ -31,7 +31,7 @@ export interface TradeResult {
   id: string;
   timestamp: number;
   asset: string;
-  direction: 'BUY' | 'SELL';
+  direction: "BUY" | "SELL";
   amount: number;
   expirationMinutes: number;
   success: boolean;

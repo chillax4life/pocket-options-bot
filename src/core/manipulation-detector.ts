@@ -1,5 +1,5 @@
-import { Candle } from '../types';
-import { logger } from '../utils/logger';
+import { Candle } from "../types";
+import { logger } from "../utils/logger";
 
 /**
  * Price Manipulation Detector
@@ -18,25 +18,25 @@ export class ManipulationDetector {
     const reasons: string[] = [];
 
     if (this.hasVolumeSpike(candles)) {
-      reasons.push('Unusual volume spike detected');
+      reasons.push("Unusual volume spike detected");
     }
 
-    if (this.detectWickPattern(candles) === 'MANIPULATION') {
-      reasons.push('Repeated wick pattern suggests stop hunting');
+    if (this.detectWickPattern(candles) === "MANIPULATION") {
+      reasons.push("Repeated wick pattern suggests stop hunting");
     }
 
     if (this.hasAbnormalSpread(candles)) {
-      reasons.push('Abnormally tight spread with low volume');
+      reasons.push("Abnormally tight spread with low volume");
     }
 
     if (this.detectSuddenReversal(candles)) {
-      reasons.push('Sudden reversal without volume support');
+      reasons.push("Sudden reversal without volume support");
     }
 
     const isManipulated = reasons.length >= 2; // Require 2+ signals
 
     if (isManipulated) {
-      logger.warn(`⚠️  Manipulation detected: ${reasons.join(', ')}`);
+      logger.warn(`⚠️  Manipulation detected: ${reasons.join(", ")}`);
     }
 
     return { isManipulated, reasons };
@@ -57,7 +57,9 @@ export class ManipulationDetector {
 
     // Check if price is stagnant despite volume spike
     const lastCandle = candles[candles.length - 1];
-    const priceChange = Math.abs((lastCandle.close - lastCandle.open) / lastCandle.open);
+    const priceChange = Math.abs(
+      (lastCandle.close - lastCandle.open) / lastCandle.open,
+    );
     const isStagnant = priceChange < 0.001; // Less than 0.1% movement
 
     return hasSpike && isStagnant;
@@ -66,8 +68,8 @@ export class ManipulationDetector {
   /**
    * Detect repeated wick patterns (stop hunting)
    */
-  private detectWickPattern(candles: Candle[]): 'MANIPULATION' | 'NORMAL' {
-    if (candles.length < 5) return 'NORMAL';
+  private detectWickPattern(candles: Candle[]): "MANIPULATION" | "NORMAL" {
+    if (candles.length < 5) return "NORMAL";
 
     const recent = candles.slice(-5);
     let upperWicks = 0;
@@ -76,7 +78,7 @@ export class ManipulationDetector {
     for (const c of recent) {
       const bodySize = Math.abs(c.close - c.open);
       const totalSize = c.high - c.low;
-      
+
       if (totalSize === 0) continue;
 
       const upperWickSize = c.high - Math.max(c.open, c.close);
@@ -91,10 +93,10 @@ export class ManipulationDetector {
 
     // 3+ consecutive large wicks in same direction = manipulation
     if (upperWicks >= 3 || lowerWicks >= 3) {
-      return 'MANIPULATION';
+      return "MANIPULATION";
     }
 
-    return 'NORMAL';
+    return "NORMAL";
   }
 
   /**
@@ -104,11 +106,11 @@ export class ManipulationDetector {
     if (candles.length < 10) return false;
 
     const recent = candles.slice(-10);
-    const spreads = recent.map(c => (c.high - c.low) / c.low);
+    const spreads = recent.map((c) => (c.high - c.low) / c.low);
     const avgSpread = spreads.reduce((a, b) => a + b, 0) / spreads.length;
 
     const lastSpread = spreads[spreads.length - 1];
-    
+
     // Unusually tight spread (less than 30% of average)
     return lastSpread < avgSpread * 0.3 && avgSpread > 0;
   }
@@ -140,7 +142,9 @@ export class ManipulationDetector {
    */
   increaseSensitivity(amount: number = 0.1): void {
     this.sensitivity = Math.min(this.sensitivity + amount, 2.0);
-    logger.info(`Manipulation detection sensitivity increased to ${this.sensitivity.toFixed(2)}`);
+    logger.info(
+      `Manipulation detection sensitivity increased to ${this.sensitivity.toFixed(2)}`,
+    );
   }
 
   /**
@@ -148,7 +152,9 @@ export class ManipulationDetector {
    */
   decreaseSensitivity(amount: number = 0.1): void {
     this.sensitivity = Math.max(this.sensitivity - amount, 0.5);
-    logger.info(`Manipulation detection sensitivity decreased to ${this.sensitivity.toFixed(2)}`);
+    logger.info(
+      `Manipulation detection sensitivity decreased to ${this.sensitivity.toFixed(2)}`,
+    );
   }
 
   /**

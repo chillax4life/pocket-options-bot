@@ -1,7 +1,7 @@
-import winston from 'winston';
-import { logging } from '../config';
-import * as path from 'path';
-import * as fs from 'fs';
+import winston from "winston";
+import { logging } from "../config";
+import * as path from "path";
+import * as fs from "fs";
 
 const logDir = path.dirname(logging.file);
 if (!fs.existsSync(logDir)) {
@@ -11,10 +11,10 @@ if (!fs.existsSync(logDir)) {
 export const logger = winston.createLogger({
   level: logging.level,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
     new winston.transports.File({
@@ -26,8 +26,8 @@ export const logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.printf(
-          info => `${info.timestamp} ${info.level}: ${info.message}`
-        )
+          (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+        ),
       ),
     }),
   ],

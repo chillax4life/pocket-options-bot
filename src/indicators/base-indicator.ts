@@ -1,5 +1,5 @@
-import { Indicator, Candle, Signal } from '../types';
-import { config } from '../config';
+import { Indicator, Candle, Signal } from "../types";
+import { config } from "../config";
 
 /**
  * Base Indicator Class
@@ -57,14 +57,14 @@ export abstract class BaseIndicator implements Indicator {
    * Convert signal value to Signal object
    */
   protected createSignal(value: number, confidence: number = 1.0): Signal {
-    let direction: 'BUY' | 'SELL' | 'NEUTRAL';
-    
+    let direction: "BUY" | "SELL" | "NEUTRAL";
+
     if (value > 0.3) {
-      direction = 'BUY';
+      direction = "BUY";
     } else if (value < -0.3) {
-      direction = 'SELL';
+      direction = "SELL";
     } else {
-      direction = 'NEUTRAL';
+      direction = "NEUTRAL";
     }
 
     return {

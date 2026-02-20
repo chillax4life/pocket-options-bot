@@ -15,14 +15,17 @@ export function randomDelay(min: number, max: number): number {
  */
 export async function humanSleep(minMs: number, maxMs: number): Promise<void> {
   const delay = randomDelay(minMs, maxMs);
-  return new Promise(resolve => setTimeout(resolve, delay));
+  return new Promise((resolve) => setTimeout(resolve, delay));
 }
 
 /**
  * Add slight randomness to trade amount
  * Example: $10 becomes $9.80 - $10.20
  */
-export function randomizeAmount(baseAmount: number, variancePercent: number = 2): number {
+export function randomizeAmount(
+  baseAmount: number,
+  variancePercent: number = 2,
+): number {
   const variance = (baseAmount * variancePercent) / 100;
   const randomOffset = (Math.random() - 0.5) * 2 * variance;
   return parseFloat((baseAmount + randomOffset).toFixed(2));
@@ -34,7 +37,7 @@ export function randomizeAmount(baseAmount: number, variancePercent: number = 2)
  */
 export function randomizeThreshold(
   baseThreshold: number,
-  variancePercent: number = 5
+  variancePercent: number = 5,
 ): number {
   const variance = (baseThreshold * variancePercent) / 100;
   const randomOffset = (Math.random() - 0.5) * 2 * variance;
@@ -49,10 +52,10 @@ export function generateMousePath(
   startY: number,
   endX: number,
   endY: number,
-  steps: number = 20
+  steps: number = 20,
 ): Array<{ x: number; y: number }> {
   const path: Array<{ x: number; y: number }> = [];
-  
+
   // Generate random control points for bezier curve
   const cp1x = startX + (endX - startX) * (0.25 + Math.random() * 0.25);
   const cp1y = startY + (endY - startY) * (0.25 + Math.random() * 0.25);
@@ -61,14 +64,14 @@ export function generateMousePath(
 
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
-    
+
     // Cubic bezier formula
     const x =
       Math.pow(1 - t, 3) * startX +
       3 * Math.pow(1 - t, 2) * t * cp1x +
       3 * (1 - t) * Math.pow(t, 2) * cp2x +
       Math.pow(t, 3) * endX;
-    
+
     const y =
       Math.pow(1 - t, 3) * startY +
       3 * Math.pow(1 - t, 2) * t * cp1y +
@@ -92,7 +95,10 @@ export function shouldHesitate(baseChance: number = 0.05): boolean {
  * Random scan interval variance
  * Prevents predictable timing
  */
-export function getRandomScanInterval(baseInterval: number, varianceMs: number = 5000): number {
+export function getRandomScanInterval(
+  baseInterval: number,
+  varianceMs: number = 5000,
+): number {
   const offset = (Math.random() - 0.5) * 2 * varianceMs;
   return Math.floor(baseInterval + offset);
 }
@@ -122,7 +128,7 @@ export class HumanDecisionMaker {
   /**
    * Check if we should override a decision (human changes mind)
    */
-  shouldOverrideDecision(currentDirection: 'BUY' | 'SELL'): boolean {
+  shouldOverrideDecision(currentDirection: "BUY" | "SELL"): boolean {
     // 3% chance to "change mind" and skip trade
     if (Math.random() < 0.03) {
       return true;
@@ -131,9 +137,8 @@ export class HumanDecisionMaker {
     // Don't trade same direction 5+ times in a row (human varies)
     const now = Date.now();
     const recentSame = this.recentDecisions
-      .filter(d => now - d.timestamp < 30 * 60 * 1000) // Last 30 min
-      .filter(d => d.direction === currentDirection)
-      .length;
+      .filter((d) => now - d.timestamp < 30 * 60 * 1000) // Last 30 min
+      .filter((d) => d.direction === currentDirection).length;
 
     if (recentSame >= 5) {
       return Math.random() < 0.4; // 40% chance to skip
@@ -145,7 +150,7 @@ export class HumanDecisionMaker {
   /**
    * Record a decision
    */
-  recordDecision(direction: 'BUY' | 'SELL'): void {
+  recordDecision(direction: "BUY" | "SELL"): void {
     this.recentDecisions.push({
       timestamp: Date.now(),
       direction,
@@ -179,7 +184,7 @@ export class BrowserHumanizer {
     // Click within 5px of center
     const offsetX = (Math.random() - 0.5) * 10;
     const offsetY = (Math.random() - 0.5) * 10;
-    
+
     return {
       x: Math.round(centerX + offsetX),
       y: Math.round(centerY + offsetY),
@@ -204,7 +209,7 @@ export class BrowserHumanizer {
    */
   async humanType(text: string): Promise<string[]> {
     const commands: string[] = [];
-    
+
     for (const char of text) {
       commands.push(`press ${char}`);
       // Random typing speed

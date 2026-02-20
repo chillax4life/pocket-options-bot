@@ -1,9 +1,9 @@
-import { TradeResult, PnLStats, PnLPeriod } from '../types';
-import * as fs from 'fs';
-import * as path from 'path';
+import { TradeResult, PnLStats, PnLPeriod } from "../types";
+import * as fs from "fs";
+import * as path from "path";
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const TRADES_FILE = path.join(DATA_DIR, 'trades.json');
+const DATA_DIR = path.join(process.cwd(), "data");
+const TRADES_FILE = path.join(DATA_DIR, "trades.json");
 
 /**
  * P&L (Profit & Loss) Tracker
@@ -35,9 +35,15 @@ export class PnLTracker {
     const monthAgo = now - 30 * 24 * 60 * 60 * 1000;
 
     return {
-      daily: this.calculatePeriod(this.trades.filter(t => t.timestamp > dayAgo)),
-      weekly: this.calculatePeriod(this.trades.filter(t => t.timestamp > weekAgo)),
-      monthly: this.calculatePeriod(this.trades.filter(t => t.timestamp > monthAgo)),
+      daily: this.calculatePeriod(
+        this.trades.filter((t) => t.timestamp > dayAgo),
+      ),
+      weekly: this.calculatePeriod(
+        this.trades.filter((t) => t.timestamp > weekAgo),
+      ),
+      monthly: this.calculatePeriod(
+        this.trades.filter((t) => t.timestamp > monthAgo),
+      ),
       allTime: this.calculatePeriod(this.trades),
     };
   }
@@ -70,8 +76,8 @@ export class PnLTracker {
   getDailyLossPercent(startingBalance: number): number {
     const now = Date.now();
     const dayAgo = now - 24 * 60 * 60 * 1000;
-    const todayTrades = this.trades.filter(t => t.timestamp > dayAgo);
-    
+    const todayTrades = this.trades.filter((t) => t.timestamp > dayAgo);
+
     const totalPnL = todayTrades.reduce((sum, t) => sum + t.profitLoss, 0);
     return (totalPnL / startingBalance) * 100;
   }
@@ -91,8 +97,8 @@ export class PnLTracker {
       };
     }
 
-    const profits = trades.map(t => t.profitLoss);
-    const successfulTrades = trades.filter(t => t.success);
+    const profits = trades.map((t) => t.profitLoss);
+    const successfulTrades = trades.filter((t) => t.success);
 
     return {
       profitUsd: profits.reduce((a, b) => a + b, 0),
@@ -109,7 +115,7 @@ export class PnLTracker {
    */
   getSummaryString(): string {
     const stats = this.getStats();
-    
+
     return `
 ╔══════════════════════════════════════════════════╗
 ║       Pocket Options Bot - P&L Summary           ║
@@ -122,7 +128,7 @@ export class PnLTracker {
   }
 
   private formatProfit(amount: number): string {
-    const sign = amount >= 0 ? '+' : '';
+    const sign = amount >= 0 ? "+" : "";
     return `${sign}$${amount.toFixed(2)}`;
   }
 
@@ -135,11 +141,11 @@ export class PnLTracker {
   private loadTrades(): void {
     try {
       if (fs.existsSync(TRADES_FILE)) {
-        const data = fs.readFileSync(TRADES_FILE, 'utf-8');
+        const data = fs.readFileSync(TRADES_FILE, "utf-8");
         this.trades = JSON.parse(data);
       }
     } catch (error) {
-      console.error('Failed to load trades:', error);
+      console.error("Failed to load trades:", error);
       this.trades = [];
     }
   }
@@ -148,7 +154,7 @@ export class PnLTracker {
     try {
       fs.writeFileSync(TRADES_FILE, JSON.stringify(this.trades, null, 2));
     } catch (error) {
-      console.error('Failed to save trades:', error);
+      console.error("Failed to save trades:", error);
     }
   }
 }

@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "ctx7sk-d82238cf-28eb-422e-bcde-f39505fd8a2a"
+      ]
+    },
+    "ai-link": {
+      "command": "bun",
+      "args": [
+        "run",
+        "/Users/ryanmolinich/Projects/ai-link-mcp-server/index.js"
+      ]
+    }
+  }
+}

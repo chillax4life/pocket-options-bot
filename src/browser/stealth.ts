@@ -16,14 +16,15 @@ export interface StealthConfig {
  * Generate realistic user agent for Chrome
  */
 export function generateUserAgent(): string {
-  const chromeVersions = ['120', '121', '122', '123'];
+  const chromeVersions = ["120", "121", "122", "123"];
   const osPlatforms = [
-    'Windows NT 10.0; Win64; x64',
-    'Macintosh; Intel Mac OS X 10_15_7',
-    'X11; Linux x86_64',
+    "Windows NT 10.0; Win64; x64",
+    "Macintosh; Intel Mac OS X 10_15_7",
+    "X11; Linux x86_64",
   ];
 
-  const chrome = chromeVersions[Math.floor(Math.random() * chromeVersions.length)];
+  const chrome =
+    chromeVersions[Math.floor(Math.random() * chromeVersions.length)];
   const platform = osPlatforms[Math.floor(Math.random() * osPlatforms.length)];
 
   return `Mozilla/5.0 (${platform}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chrome}.0.0.0 Safari/537.36`;
@@ -41,7 +42,9 @@ export function generateViewport(): { width: number; height: number } {
     { width: 2560, height: 1440 },
   ];
 
-  return commonResolutions[Math.floor(Math.random() * commonResolutions.length)];
+  return commonResolutions[
+    Math.floor(Math.random() * commonResolutions.length)
+  ];
 }
 
 /**
@@ -49,14 +52,14 @@ export function generateViewport(): { width: number; height: number } {
  */
 export function generateStealthConfig(): StealthConfig {
   const timezones = [
-    'America/New_York',
-    'America/Chicago',
-    'America/Los_Angeles',
-    'America/Denver',
-    'Europe/London',
+    "America/New_York",
+    "America/Chicago",
+    "America/Los_Angeles",
+    "America/Denver",
+    "Europe/London",
   ];
 
-  const locales = ['en-US', 'en-GB', 'en-CA'];
+  const locales = ["en-US", "en-GB", "en-CA"];
 
   return {
     userAgent: generateUserAgent(),
@@ -77,12 +80,12 @@ export function getStealthFlags(config: StealthConfig): string[] {
     `--window-size=${config.viewport.width},${config.viewport.height}`,
     `--lang=${config.locale}`,
     `--timezone-id=${config.timezone}`,
-    '--disable-blink-features=AutomationControlled',
-    '--disable-dev-shm-usage',
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-web-security',
-    '--disable-features=IsolateOrigins,site-per-process',
+    "--disable-blink-features=AutomationControlled",
+    "--disable-dev-shm-usage",
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-web-security",
+    "--disable-features=IsolateOrigins,site-per-process",
   ];
 }
 

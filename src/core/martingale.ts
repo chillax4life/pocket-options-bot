@@ -1,14 +1,15 @@
-import { config } from '../config';
-import { logger } from '../utils/logger';
+import { config } from "../config";
+import { logger } from "../utils/logger";
 
 /**
- * Martingale Strategy Manager
- * Implements 1 → 2 → 4 → 8 simultaneous trades progression
+ * Dynamic Sizing Manager - 'High-Safety' Strategy
+ * Prioritizes the 1/4 Kelly Criterion for consistent, non-surprising growth.
  */
-export class MartingaleManager {
+export class DynamicSizingManager {
   private currentTier: number = 0;
   private baseAmount: number;
   private maxTier: number;
+  private useKelly: boolean = true; // Use Kelly by default for "Balanced Growth"
 
   constructor() {
     this.baseAmount = config.baseTradeAmount;
@@ -16,53 +17,33 @@ export class MartingaleManager {
   }
 
   /**
-   * Called when a trade loses
+   * Called when a trade loses - For 'Balanced Growth' we do NOT double down.
+   * We reset or slightly reduce risk to preserve capital.
    */
   onTradeLoss(): void {
-    if (this.currentTier < this.maxTier) {
-      this.currentTier++;
-      logger.warn(`Martingale tier increased to ${this.currentTier} (${this.getTradeCount()} trades)`);
-    } else {
-      logger.error('Martingale max tier reached! Consider stopping trading.');
-    }
+    logger.warn(
+      `Trade loss recorded. Resetting sizing to base to preserve capital.`,
+    );
+    this.currentTier = 0; // Reset tier - NEVER double down in "No-Surprise" mode
   }
 
   /**
    * Called when a trade wins
    */
   onTradeWin(): void {
-    if (this.currentTier > 0) {
-      logger.info(`Martingale recovered! Resetting from tier ${this.currentTier} to 0`);
-    }
     this.currentTier = 0;
+    logger.info(`Trade win! Maintaining optimal sizing.`);
   }
 
   /**
-   * Get current tier
+   * Get trade amount based on Kelly or Fixed Base
    */
-  getCurrentTier(): number {
-    return this.currentTier;
-  }
-
-  /**
-   * Get number of simultaneous trades to execute
-   */
-  getTradeCount(): number {
-    return Math.pow(2, this.currentTier); // 2^0=1, 2^1=2, 2^2=4, 2^3=8
-  }
-
-  /**
-   * Get amount per individual trade
-   */
-  getTradeAmount(): number {
+  getTradeAmount(kellySuggested?: number): number {
+    if (this.useKelly && kellySuggested && kellySuggested > 0) {
+      // Use the smaller of the two for safety
+      return Math.min(this.baseAmount, kellySuggested);
+    }
     return this.baseAmount;
-  }
-
-  /**
-   * Get total capital at risk
-   */
-  getTotalRisk(): number {
-    return this.getTradeCount() * this.baseAmount;
   }
 
   /**
@@ -73,27 +54,23 @@ export class MartingaleManager {
   }
 
   /**
-   * Force reset to tier 0
+   * Force reset
    */
   reset(): void {
     this.currentTier = 0;
-    logger.info('Martingale manager reset to tier 0');
+    logger.info("Sizing manager reset to base.");
   }
 
   /**
    * Get status summary
    */
   getStatus(): {
-    tier: number;
-    tradeCount: number;
+    mode: string;
     totalRisk: number;
-    isMaxTier: boolean;
   } {
     return {
-      tier: this.currentTier,
-      tradeCount: this.getTradeCount(),
-      totalRisk: this.getTotalRisk(),
-      isMaxTier: this.isAtMaxTier(),
+      mode: this.useKelly ? "Fractional Kelly (0.25x)" : "Fixed Base",
+      totalRisk: this.getTradeAmount(),
     };
   }
 }

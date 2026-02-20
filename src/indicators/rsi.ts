@@ -1,6 +1,6 @@
-import { RSI } from 'technicalindicators';
-import { BaseIndicator } from './base-indicator';
-import { Candle, Signal } from '../types';
+import { RSI } from "technicalindicators";
+import { BaseIndicator } from "./base-indicator";
+import { Candle, Signal } from "../types";
 
 /**
  * RSI (Relative Strength Index) Indicator
@@ -10,7 +10,7 @@ export class RSIIndicator extends BaseIndicator {
   private period: number;
 
   constructor(period: number = 14, weight: number = 0.8) {
-    super('RSI', weight);
+    super("RSI", weight);
     this.period = period;
   }
 
@@ -19,9 +19,9 @@ export class RSIIndicator extends BaseIndicator {
       return this.createSignal(0, 0);
     }
 
-    const closes = candles.map(c => c.close);
+    const closes = candles.map((c) => c.close);
     const rsiValues = RSI.calculate({ period: this.period, values: closes });
-    
+
     if (rsiValues.length === 0) {
       return this.createSignal(0, 0);
     }

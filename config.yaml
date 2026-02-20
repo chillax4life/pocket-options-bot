@@ -14,8 +14,8 @@ trading:
   asset: "EUR/USD"  # Default trading asset
   timeframe: 1  # minutes (candle timeframe)
   contract_duration: 5  # minutes (option expiration)
-  stake_amount: 5.0  # USD per trade
-  max_concurrent_trades: 1  # One trade at a time
+  stake_amount: 1.0  # USD per trade
+  max_concurrent_trades: 2  # One trade at a time
   wait_between_trades: 10  # seconds
   
 indicators:
