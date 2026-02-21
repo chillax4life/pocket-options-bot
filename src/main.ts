@@ -4,6 +4,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// Types
+interface SignalSummary {
+  action: string;
+  confidence?: number;
+}
+
+interface SignalData {
+  summary?: SignalSummary;
+}
+
 // Configuration
 const CONFIG = {
   symbol: "EURUSD", // TradingView symbol
@@ -104,21 +114,21 @@ class PocketBot {
         }
 
         await new Promise((r) => setTimeout(r, CONFIG.intervalMs));
-      } catch (e) {
-        console.error("Loop Error:", e.message);
+      } catch (e: unknown) {
+        console.error("Loop Error:", e instanceof Error ? e.message : String(e));
         await new Promise((r) => setTimeout(r, 5000));
       }
     }
   }
 
-  async getSignal() {
+  async getSignal(): Promise<SignalData | null> {
     try {
       // Talk to AI Link Server (Localhost) - Request 1m interval
       const res = await fetch(
         `http://localhost:3000/api/signal?symbol=${CONFIG.symbol}&interval=1`,
       );
-      if (res.ok) return await res.json();
-    } catch (e) {
+      if (res.ok) return await res.json() as SignalData;
+    } catch {
       // console.error('Signal fetch failed (AI Link offline?)');
     }
     return null;

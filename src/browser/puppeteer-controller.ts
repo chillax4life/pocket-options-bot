@@ -58,7 +58,7 @@ export class PocketPuppeteer {
     console.log("✅ Browser ready.");
   }
 
-  async login(email, password) {
+  async login(email: string, password: string) {
     if (!this.page) return;
 
     console.log("🔐 Attempting Login...");
@@ -104,8 +104,8 @@ export class PocketPuppeteer {
       } else {
         console.error("❌ Login button not found");
       }
-    } catch (e) {
-      console.error("Login flow error:", e.message);
+    } catch (e: unknown) {
+      console.error("Login flow error:", e instanceof Error ? e.message : String(e));
     }
   }
 
